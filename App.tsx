@@ -12,7 +12,6 @@ const App: React.FC = () => {
   const [answers, setAnswers] = useState<DiagnosisType[]>([]);
   const [result, setResult] = useState<ResultContent | null>(null);
 
-  // Direct access via URL query ?t=A
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const type = params.get('t') as DiagnosisType;
@@ -23,14 +22,12 @@ const App: React.FC = () => {
   }, []);
 
   const handleStart = () => {
-    console.log('event: start_click');
     setAnswers([]);
     setCurrentQuestion(0);
     setState(AppState.QUIZ);
   };
 
   const handleAnswer = (type: DiagnosisType) => {
-    console.log(`event: answer_selected (Q${currentQuestion + 1}, ${type})`);
     const newAnswers = [...answers, type];
     setAnswers(newAnswers);
 
@@ -54,7 +51,6 @@ const App: React.FC = () => {
     const counts: Record<DiagnosisType, number> = { A: 0, B: 0, C: 0, D: 0 };
     finalAnswers.forEach(ans => counts[ans]++);
 
-    // Determine max score, priority A > B > C > D
     const winner = (['A', 'B', 'C', 'D'] as DiagnosisType[]).reduce((a, b) => 
       counts[a] >= counts[b] ? a : b
     );
@@ -62,10 +58,8 @@ const App: React.FC = () => {
     const resultData = RESULTS[winner];
     setResult(resultData);
     setState(AppState.RESULT);
-    console.log(`event: result_view (${winner})`);
     
-    // Save to local storage
-    localStorage.setItem('last_gunpla_diagnosis', winner);
+    localStorage.setItem('last_mokatsu_diagnosis', winner);
   };
 
   const handleReset = () => {
@@ -73,7 +67,6 @@ const App: React.FC = () => {
     setResult(null);
     setAnswers([]);
     setCurrentQuestion(0);
-    // Clear URL query without refreshing
     window.history.replaceState({}, '', window.location.pathname);
   };
 

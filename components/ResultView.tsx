@@ -13,6 +13,9 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset }) => {
   const [isLoadingAi, setIsLoadingAi] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // 指定の投稿のリプライ欄でシェアを促すためのステータスID（適宜変更してください）
+  const TARGET_STATUS_ID = "0000000000000000000"; 
+
   useEffect(() => {
     const fetchComment = async () => {
       const comment = await getAIComment(result.id, result.title);
@@ -26,31 +29,29 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset }) => {
     console.log('event: share_click');
     const url = encodeURIComponent(window.location.origin + window.location.pathname + `?t=${result.id}`);
     const text = encodeURIComponent(result.share);
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+    
+    // in_reply_to パラメータを使用することで、指定の投稿への返信としてツイート画面を開きます
+    const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}&in_reply_to=${TARGET_STATUS_ID}`;
+    window.open(shareUrl, '_blank');
   };
 
   const handleDownload = () => {
     console.log('event: download_click');
-    // Simple canvas approach to generate a visual card
     const canvas = document.createElement('canvas');
     canvas.width = 1200;
     canvas.height = 630;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Background
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Military Border
     ctx.strokeStyle = '#f97316';
     ctx.lineWidth = 10;
     ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
 
-    // Title & Type
     ctx.fillStyle = '#f97316';
-    ctx.font = 'bold 30px Arial';
-    ctx.fillText('GUNPLA TYPE DIAGNOSIS RESULT', 60, 80);
+    ctx.font = 'bold 30px sans-serif';
+    ctx.fillText('MOKATSU TYPE DIAGNOSIS RESULT', 60, 80);
 
     ctx.fillStyle = 'white';
     ctx.font = 'bold 80px sans-serif';
@@ -60,7 +61,6 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset }) => {
     ctx.font = 'bold 40px sans-serif';
     ctx.fillText(`TYPE ${result.id}`, 60, 270);
 
-    // Content
     ctx.fillStyle = '#d1d5db';
     ctx.font = '32px sans-serif';
     const lines = [
@@ -72,14 +72,12 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset }) => {
       ctx.fillText(line, 60, 350 + (i * 50));
     });
 
-    // Branding
     ctx.fillStyle = '#4b5563';
     ctx.font = '24px monospace';
     ctx.fillText('POWERED BY 王の洞窟', canvas.width - 320, canvas.height - 60);
 
-    // Download
     const link = document.createElement('a');
-    link.download = `gunpla_diagnosis_${result.id}.png`;
+    link.download = `mokatsu_diagnosis_${result.id}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
   };
@@ -147,12 +145,12 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset }) => {
       <div className="flex flex-col gap-3">
         <button
           onClick={handleShareX}
-          className="w-full bg-[#1DA1F2] hover:bg-[#1991db] text-white font-bold py-4 rounded flex items-center justify-center gap-2 transition transform active:scale-95"
+          className="w-full bg-black hover:bg-zinc-900 text-white font-bold py-4 rounded flex items-center justify-center gap-3 transition transform active:scale-95 border border-zinc-800"
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
           </svg>
-          Xで診断結果をシェア
+          Xの返信で診断結果をシェア
         </button>
 
         <button
@@ -168,21 +166,6 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset }) => {
         >
           もう一度診断する
         </button>
-      </div>
-
-      <div className="bg-orange-600/10 p-6 rounded-sm border-2 border-dashed border-orange-600/30 text-center">
-        <h4 className="text-orange-500 font-black mb-2">諸君へ、次の任務だ。</h4>
-        <p className="text-xs text-gray-300 mb-4">
-          「王の洞窟」で理想の機体を探し、<br/>
-          この診断結果を引用ポストで報告せよ！
-        </p>
-        <a 
-          href="https://twitter.com/intent/tweet?text=王の洞窟でキットを探してきます！" 
-          target="_blank"
-          className="inline-block bg-orange-600 text-black px-6 py-2 rounded font-black text-sm animate-bounce"
-        >
-          作戦本部に報告（引用RT）
-        </a>
       </div>
     </div>
   );

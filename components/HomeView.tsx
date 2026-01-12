@@ -17,17 +17,17 @@ const HomeView: React.FC<HomeViewProps> = ({ onStart }) => {
       </div>
       
       <h1 className="text-4xl md:text-5xl font-black mb-2 text-white italic tracking-tighter">
-        ガンプラタイプ<span className="text-orange-500">診断</span>
+        模活タイプ<span className="text-orange-500">診断</span>
       </h1>
       
       <p className="text-orange-500 font-bold mb-6 tracking-widest text-sm uppercase">
-        Identify Your Builder Soul
+        Identify Your Modeler Soul
       </p>
 
       <div className="bg-black/50 p-4 mb-8 text-left border-l-4 border-orange-500 rounded">
         <p className="text-sm leading-relaxed text-gray-300">
-          戦場（作業机）は人によって様々だ。<br/>
-          諸君の行動パターンから、最適な「機体（スタイル）」を特定する。<br/>
+          戦場（作業デスク）は人によって様々だ。<br/>
+          諸君の製作パターンから、最適な「スタイル」を特定する。<br/>
           全8問のブリーフィングに応答せよ。
         </p>
       </div>
