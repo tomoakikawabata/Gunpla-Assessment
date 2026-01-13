@@ -13,7 +13,10 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset }) => {
   const [isLoadingAi, setIsLoadingAi] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // 指定の投稿のリプライ欄でシェアを促すためのステータスID（適宜変更してください）
+  /**
+   * 指定の投稿（公式ポストなど）のリプライ欄に誘導するためのポストID。
+   * ここに実際のポストID（数字の羅列）を入力してください。
+   */
   const TARGET_STATUS_ID = "0000000000000000000"; 
 
   useEffect(() => {
@@ -30,7 +33,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset }) => {
     const url = encodeURIComponent(window.location.origin + window.location.pathname + `?t=${result.id}`);
     const text = encodeURIComponent(result.share);
     
-    // in_reply_to パラメータを使用することで、指定の投稿への返信としてツイート画面を開きます
+    // in_reply_to パラメータを付与することで、指定の投稿への返信として投稿画面が開きます
     const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}&in_reply_to=${TARGET_STATUS_ID}`;
     window.open(shareUrl, '_blank');
   };
